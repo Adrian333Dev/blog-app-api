@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "blog-app-api"
+version = "0.1.0"
+description = ""
+authors = ["Adrian333Dev <adrian333dev@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.4"
+djangorestframework = "^3.14.0"
+psycopg2 = "^2.9.7"
+django-filter = "^23.2"
+django-split-settings = "^1.2.0"
+pyyaml = "^6.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
