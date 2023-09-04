@@ -16,6 +16,13 @@ django-split-settings = "^1.2.0"
 pyyaml = "^6.0.1"
 
 
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.4.0"
+
+[tool.isort]
+multi_line_output = 5
+line_length = 119
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

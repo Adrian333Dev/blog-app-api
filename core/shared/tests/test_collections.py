@@ -1,6 +1,7 @@
 # Test Custom Collections
 
 from unittest import TestCase
+
 from core.shared.utils.collections import deep_update
 
 

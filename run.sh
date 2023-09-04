@@ -1,7 +1,15 @@
 #!/usr/bin/bash
 
 # Variables
-GREETING="Hello World!"
 
-# Commands
-echo $GREETING
+# Functions
+
+function install {
+  if [ $# -eq 0 ]; then
+    echo "Installing dependencies..."
+    # poetry install
+  else
+    echo "Adding following packages: $@"
+    # poetry add $@
+  fi
+}

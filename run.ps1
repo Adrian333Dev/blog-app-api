@@ -84,4 +84,3 @@ else {
     Write-Host "update (u) - Install dependencies and apply migrations"
     Write-Host "test (t) - Run tests"
 }
-
