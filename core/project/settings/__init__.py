@@ -18,6 +18,7 @@ if not os.path.isabs(LOCAL_SETTINGS_PATH):
 # Include settings:
 include(
     "base.py",
+    "logging.py",
     "custom.py",
     optional(LOCAL_SETTINGS_PATH),
     "envvars.py",
