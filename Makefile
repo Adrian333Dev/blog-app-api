@@ -113,6 +113,14 @@ superuser:
 	@$(MANAGE) createsuperuser
 su: superuser
 
+.PHONY: startapp sa
+startapp:
+	$(eval ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+	@$(if $(ARGS),,$(error You must specify at least one argument))
+	@echo "Creating app: $(ARGS)"
+	@$(MANAGE) startapp $(ARGS)
+sa: startapp
+
 .PHONY: help h
 help:
 	@echo "Usage: make <command>"
