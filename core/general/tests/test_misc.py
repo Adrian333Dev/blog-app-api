@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from core.shared.utils.misc import yaml_coerce
+from core.general.utils.misc import yaml_coerce
 
 
 class TestMisc(TestCase):

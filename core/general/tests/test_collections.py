@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from core.shared.utils.collections import deep_update
+from core.general.utils.collections import deep_update
 
 
 class TestCollections(TestCase):

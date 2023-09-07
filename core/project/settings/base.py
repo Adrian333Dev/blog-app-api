@@ -44,8 +44,17 @@ WSGI_APPLICATION = "core.project.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "C:/Users/Adria/projects/blog-app/api/db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "localhost",
+        "PORT": "5432",
+        "ATOMIC_REQUESTS": True,
+        # TODO(dmu) MEDIUM:
+        # Unfortunately Daphne / ASGI / Django Channels do not properly reuse database connections and therefore we are getting resource (connection) leak that leads to the following:
+        # django.db.utils.OperationalError: FATAL:  sorry, too many clients already `'CONN_MAX_AGE': 0` is used as workaround. In case it notably affects performance implement a solution that either closes database connections on WebSocket client disconnect and implement connection pooling outside Django (BgBouncer or similar)
+        "CONN_MAX_AGE": 0,
     }
 }
 

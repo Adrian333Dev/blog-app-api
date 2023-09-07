@@ -40,6 +40,13 @@ install:
 	@poetry install
 i: install
 
+remove:
+	$(eval ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+	@$(if $(ARGS),,$(error You must specify at least one argument))
+	@echo "Removing following packages: $(ARGS)"
+	@poetry remove $(ARGS)
+rm: remove
+
 install-pre-commit:
 	@echo "Uninstalling and installing pre-commit"
 	@poetry run pre-commit uninstall; poetry run pre-commit install
@@ -83,6 +90,29 @@ flake8:
 	@poetry run flakes $(ARGS)
 f8: flake8
 
+.PHONY: up-dependencies-only
+up-dependencies-only:
+	@echo "Starting dependencies"
+	@$(if $(filter Windows_NT,$(OS)),(if not exist .env (echo. > .env)),(test -f .env || touch .env))
+	docker-compose -f docker-compose.dev.yml up --force-recreate db
+up-deps: up-dependencies-only
+
+down-dependencies-only:
+	@echo "Stopping dependencies"
+	docker-compose -f docker-compose.dev.yml down
+down-deps: down-dependencies-only
+
+docker-desktop:
+	@echo "Starting docker desktop"
+	'C:\Program Files\Docker\Docker\Docker Desktop.exe'
+dd: docker-desktop
+
+.PHONY: superuser su
+superuser:
+	@echo "Creating superuser"
+	@$(MANAGE) createsuperuser
+su: superuser
+
 .PHONY: help h
 help:
 	@echo "Usage: make <command>"
@@ -94,10 +124,14 @@ help:
 	@echo "  add-dev, ad         Add package as dev dependency"
 	@echo "  install, i          Install dependencies"
 	@echo "  install-pre-commit  Uninstall and install pre-commit"
+	@echo "  lint, l             Run pre-commit"
 	@echo "  update, u           Install dependencies, migrate and install pre-commit"
 	@echo "  runserver, rs       Run server"
 	@echo "  run, r              Run command"
 	@echo "  poetryrun, pr       Run command with poetry"
 	@echo "  flake8, f8          Run flake8"
-	@echo "  pre-commit, pc      Run pre-commit"
+	@echo "  up-deps             Start dependencies"
+	@echo "  docker-desktop, dd  Start docker desktop"
+	@echo "  down-deps           Stop dependencies"
+	@echo "  superuser, su       Create superuser"
 	@echo "  help, h             Show this help message and exit"
