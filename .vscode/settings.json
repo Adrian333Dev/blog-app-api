@@ -1,0 +1,12 @@
+{
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.black-formatter"
+	},
+	"flake8.args": [
+		"--max-line-length=119",
+		"--ignore=E501,W503,W504,E203",
+		"--max-complexity=12",
+		// ignore all the folders that are not needed to be checked
+		"--exclude=env,.vscode,.git,__pycache__,.pytest_cache,*migrations*,*manage.py*,*settings.py*,*asgi.py*,*wsgi.py*"
+	]
+}
