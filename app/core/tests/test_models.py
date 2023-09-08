@@ -2,15 +2,10 @@
 Tests for models.
 """
 
-from unittest.mock import patch
-from decimal import Decimal
-
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from core.constants.mock_data import john_doe, mock_user
-from core.models import Recipe, Tag, Ingredient
-from core import models
+from core.constants.mock_data import john_doe
 
 
 def create_user(**params):
@@ -81,46 +76,3 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
-
-    def test_create_recipe(self):
-        """Test creating a new recipe."""
-        user = create_user(**mock_user())
-        recipe = Recipe.objects.create(
-            user=user,
-            title="Steak and mushroom sauce",
-            time_minutes=5,
-            price=Decimal("5.00"),
-            description="How to make steak and mushroom sauce",
-        )
-
-        self.assertEqual(recipe.user, user)
-        self.assertEqual(str(recipe), recipe.title)
-        self.assertEqual(recipe.title, "Steak and mushroom sauce")
-        self.assertEqual(recipe.time_minutes, 5)
-        self.assertEqual(recipe.price, Decimal("5.00"))
-
-    def test_create_tags(self):
-        """Test creating a new tag."""
-        user = create_user(**john_doe)
-        tag = Tag.objects.create(user=user, name="Vegan")
-
-        self.assertEqual(str(tag), tag.name)
-        self.assertEqual(tag.name, "Vegan")
-
-    def test_create_ingredient(self):
-        """Test creating a new ingredient."""
-        user = create_user(**john_doe)
-        ingredient = Ingredient.objects.create(user=user, name="Cucumber")
-
-        self.assertEqual(str(ingredient), ingredient.name)
-        self.assertEqual(ingredient.name, "Cucumber")
-
-    @patch("core.models.uuid.uuid4")
-    def test_recipe_file_name_uuid(self, mock_uuid):
-        """Test that image is saved in the correct location."""
-        uuid = "test-uuid"
-        mock_uuid.return_value = uuid
-        file_path = models.recipe_image_file_path(None, "myimage.jpg")
-
-        expected_path = f"uploads/recipe/{uuid}.jpg"
-        self.assertEqual(file_path, expected_path)
