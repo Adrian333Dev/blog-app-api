@@ -1,118 +1,65 @@
 # Makefile
 
 # Variables
-DC=docker-compose
-DC_RUN=$(DC) run --rm app sh -c
-
+DC = docker-compose
+DC_RUN = $(DC) run --rm app sh -c
+MANAGE = $(DC_RUN) "python manage.py"
 
 # Commands
-.PHONY: help create-and-run-migrations migrate createmigration run-server superuser shell docker-build docker-up docker-down update test create-project create-app
-default: help
 
-create-and-run-migrations:
-	@echo "Creating and running migrations..."
-	$(DC_RUN) "python manage.py makemigrations && python manage.py migrate"
-crm: create-and-run-migrations
+## General
+.PHONY: package pkg
+package pkg:
+	@echo "Not implemented yet"
 
-migrate:
-	@echo "Running migrations..."
-	$(DC_RUN) "python manage.py migrate"
-m: migrate
+## Docker
+.PHONY: build b
+build b:
+	@$(DC) build
 
-createmigration:
-	@echo "Creating migrations..."
-	$(DC_RUN) "python manage.py makemigrations"
-cm: createmigration
+.PHONY: up u
+up u:
+	@$(DC) up
 
-run-server:
-	@echo "Running server..."
-	$(DC_RUN) "python manage.py runserver"
-r: run-server
+.PHONY: down d
+down d:
+	@$(DC) down
 
-superuser:
-	@echo "Creating superuser..."
-	$(DC_RUN) "python manage.py createsuperuser"
-su: superuser
+.PHONY: update u
+update: create-migrations build
 
-shell:
-	@echo "Running shell..."
-	$(DC_RUN) "python manage.py shell"
-sh: shell
+.PHONY: docker-clean-all dca
+docker-clean-all dca:
+	@echo "Removing all docker containers and images"
+	@docker system prune --all
 
-docker-build:
-	@echo "Building docker image..."
-	$(DC) build
-build: docker-build
+.PHONY: docker-clean-volume dcv
+docker-clean-volume dcv:
+	@echo "Removing all docker volumes"
+	@docker volume prune
 
-docker-up:
-	@echo "Running docker containers..."
-	$(DC) up
-up: docker-up
+## Django
 
-docker-down:
-	@echo "Stopping docker containers..."
-	$(DC) down
-down: docker-down
+.PHONY: create-migrations cm
+create-migrations cm:
+	@$(MANAGE) makemigrations
 
-update: makemigrations docker-build
+.PHONY: migrate m
+migrate m:
+	@$(MANAGE) migrate
 
-test:
-	@echo "Running tests..."
-	$(DC_RUN) "python manage.py test && flake8"
-t: test
+.PHONY: create-superuser su
+create-superuser su:
+	@$(MANAGE) createsuperuser
 
-create-project:
-ifeq ($(filter-out $@,$(MAKECMDGOALS)),)
-	@echo "Please provide a project name"
-else
-	@echo "Creating project..."
-	django-admin startproject $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)) .
-endif
-cp: create-project
+.PHONY: startproject spr
+startproject spr:
+	$(eval ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+	@$(if $(ARGS),,$(error You must specify project name))
+	@$(DC_RUN) "django-admin startproject $(ARGS) ."
 
-create-app:
-ifeq ($(filter-out $@,$(MAKECMDGOALS)),)
-	@echo "Please provide an app name"
-else
-	@echo "Creating app..."
-	$(DC_RUN) "python manage.py startapp $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))"
-endif
-ca: create-app
-
-
-# Help
-
-help:
-	@echo "Usage: make [command]"
-	@echo ""
-	@echo "Commands:"
-	@echo "  crm, create-and-run-migrations  Create and run migrations"
-	@echo "  m, migrate                      Run migrations"
-	@echo "  cm, createmigration             Create migrations"
-	@echo "  r, run-server                   Run server"
-	@echo "  su, superuser                   Create superuser"
-	@echo "  sh, shell                       Run shell"
-	@echo "  u, update                       Make migrations and and rebuild docker image"
-	@echo "  build                           Build docker image"
-	@echo "  up                              Run docker containers"
-	@echo "  down                            Stop docker containers"
-	@echo "  t, test                         Run tests"
-	@echo "  cp, create-project              Create project"
-	@echo "  ca, create-app                  Create app"
-	@echo "  help                            Show this help message and exit"
-	@echo ""
-	@echo "Examples:"
-	@echo "  make crm"
-	@echo "  make m"
-	@echo "  make cm"
-	@echo "  make r"
-	@echo "  make su"
-	@echo "  make sh"
-	@echo "  make u"
-	@echo "  make build"
-	@echo "  make up"
-	@echo "  make down"
-	@echo "  make t"
-	@echo "  make cp <project_name>"
-	@echo "  make ca <app_name>"
-	@echo "  make help"
+.PHONY: startapp sa
+startapp sa:
+	$(eval ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+	@$(if $(ARGS),,$(error You must specify app name))
+	@$(MANAGE) startapp $(ARGS)
