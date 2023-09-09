@@ -9,16 +9,12 @@ from core.constants.mock_data import john_doe
 
 
 def create_user(**params):
-    """
-    Helper function to create a user.
-    """
+    # Helper function to create a user.
     return get_user_model().objects.create_user(**params)
 
 
 class ModelTests(TestCase):
-    """
-    Tests for models.
-    """
+    """Tests for models."""
 
     def test_create_user_successful(self):
         """Test creating a new user is successful."""

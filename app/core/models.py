@@ -105,9 +105,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     Includes fields for user stats, roles, and privacy settings.
     """
 
-    username = SlugField(max_length=255, unique=True)  # Good for SEO
+    username = CharField(max_length=255, unique=True)
+    slug = AutoSlugField(populate_from="username", unique=True)
     email = EmailField(max_length=255, unique=True)
-    first_name = CharField(max_length=100)
+    first_name = CharField(max_length=100, blank=True)
     last_name = CharField(max_length=100, blank=True)
     bio = TextField(blank=True)
     location = CharField(max_length=255, blank=True)
@@ -116,6 +117,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = BooleanField(default=False)
     is_active = BooleanField(default=True)
     date_joined = DateTimeField(auto_now_add=True)
+
+    # required fields: username, email, password
 
     objects = UserManager()
 
@@ -300,7 +303,7 @@ class Reaction(Model):
 
     user = ForeignKey(User, on_delete=SET_NULL, null=True, db_index=True)
     post = ForeignKey(Post, on_delete=SET_NULL, null=True, blank=True)
-    reaction_types = ManyToManyField("ReactionType", related_name="reactions")
+    reaction_type = ForeignKey("ReactionType", on_delete=SET_NULL, null=True)
 
     class Meta:
         unique_together = ["user", "post", "reaction_type"]

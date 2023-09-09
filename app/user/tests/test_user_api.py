@@ -127,11 +127,11 @@ class PrivateUserApiTests(TestCase):
     def test_retrieve_profile_success(self):
         """Test retrieving profile for logged in user."""
         res = self.client.get(ME_URL)
+        excepted = john_doe.copy()
+        excepted.pop("password")
 
         self.assertEqual(res.status_code, HTTP_200_OK)
-        self.assertEqual(
-            res.data, {"username": self.user.username, "email": self.user.email}
-        )
+        self.assertEqual(res.data, excepted)
 
     def test_post_me_not_allowed(self):
         """Test that POST is not allowed on the me URL."""

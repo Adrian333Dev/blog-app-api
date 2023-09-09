@@ -1,9 +1,10 @@
 # Makefile
 
+default: help
+
 # Variables
 DC = docker-compose
 DC_RUN = $(DC) run --rm app sh -c
-MANAGE = $(DC_RUN) "python manage.py"
 
 # Commands
 
@@ -13,20 +14,20 @@ package pkg:
 	@echo "Not implemented yet"
 
 ## Docker
-.PHONY: build b
-build b:
+.PHONY: build
+build:
 	@$(DC) build
 
-.PHONY: up u
-up u:
+.PHONY: up
+up:
 	@$(DC) up
 
-.PHONY: down d
-down d:
+.PHONY: down
+down:
 	@$(DC) down
 
 .PHONY: update u
-update: create-migrations build
+update u: create-migrations build
 
 .PHONY: docker-clean-all dca
 docker-clean-all dca:
@@ -42,15 +43,15 @@ docker-clean-volume dcv:
 
 .PHONY: create-migrations cm
 create-migrations cm:
-	@$(MANAGE) makemigrations
+	@$(DC_RUN) "python manage.py makemigrations"
 
 .PHONY: migrate m
 migrate m:
-	@$(MANAGE) migrate
+	@$(DC_RUN) "python manage.py migrate"
 
 .PHONY: create-superuser su
 create-superuser su:
-	@$(MANAGE) createsuperuser
+	@$(DC_RUN) "python manage.py createsuperuser"
 
 .PHONY: startproject spr
 startproject spr:
@@ -62,4 +63,28 @@ startproject spr:
 startapp sa:
 	$(eval ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
 	@$(if $(ARGS),,$(error You must specify app name))
-	@$(MANAGE) startapp $(ARGS)
+	@$(DC_RUN) "python manage.py startapp $(ARGS)"
+
+.PHONY: test t
+test t:
+	@echo "Running tests..."
+	$(DC_RUN) "python manage.py test && flake8"
+
+# Help
+.PHONY: help
+help:
+	@echo "Usage: make [command]"
+	@echo ""
+	@echo "Commands:"
+	@echo "  build                     Build docker image"
+	@echo "  up                        Start docker containers"
+	@echo "  down                      Stop docker containers"
+	@echo "  update, u                 Make migrations and build docker image"
+	@echo "  docker-clean-all, dca     Remove all docker containers and images"
+	@echo "  docker-clean-volume, dcv  Remove all docker volumes"
+	@echo "  create-migrations, cm     Create migrations"
+	@echo "  migrate, m                Apply migrations"
+	@echo "  create-superuser, su      Create superuser"
+	@echo "  startproject, spr         Create django project"
+	@echo "  startapp, sa              Create django app"
+	@echo "  help                      Show this help message and exit"
