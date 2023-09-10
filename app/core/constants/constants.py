@@ -43,3 +43,26 @@ last_names = [
     "Thompson",
     "White",
 ]
+
+tags = [
+    "Python",
+    "Programming",
+    "Coding",
+    "Development",
+    "Software",
+    "Scripting",
+    "Algorithms",
+    "DataStructures",
+    "WebDevelopment",
+    "MachineLearning",
+    "ArtificialIntelligence",
+    "Flask",
+    "Django",
+    "NumPy",
+    "Pandas",
+    "Matplotlib",
+    "TensorFlow",
+    "PyTorch",
+    "Git",
+    "IDE",
+]

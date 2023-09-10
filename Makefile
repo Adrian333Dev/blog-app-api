@@ -13,6 +13,10 @@ DC_RUN = $(DC) run --rm app sh -c
 package pkg:
 	@echo "Not implemented yet"
 
+.PHONY: shell sh
+shell sh:
+	@$(DC_RUN) "python manage.py shell"
+
 ## Docker
 .PHONY: build
 build:
