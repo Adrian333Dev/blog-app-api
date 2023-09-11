@@ -74,6 +74,20 @@ test t:
 	@echo "Running tests..."
 	$(DC_RUN) "python manage.py test && flake8"
 
+# pip install djangorestframework-simplejwt
+# Command for install packages dynamically
+# .PHONY: install i
+# install i:
+# 	$(eval ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+# 	@$(if $(ARGS),,$(error You must specify package name))
+# 	@echo "Installing $(ARGS)..."
+# 	@$(DC_RUN) "pip install $(ARGS)"
+
+# .PHONY: save s
+# save s:
+# 	@echo "Saving packages..."
+# 	@$(DC_RUN) "pip freeze > requirements.txt"
+
 # Help
 .PHONY: help
 help:
@@ -92,3 +106,4 @@ help:
 	@echo "  startproject, spr         Create django project"
 	@echo "  startapp, sa              Create django app"
 	@echo "  help                      Show this help message and exit"
+

@@ -45,6 +45,20 @@ def user_cover_image_path(instance, filename):
     return image_path(filename, "cover_images")
 
 
+def validate_user(*args):
+    """Validate that the provided arguments are instances of the User model."""
+    for arg in args:
+        if not isinstance(arg, User):
+            raise ValueError(f"{arg} is not an instance of the User model.")
+
+
+# Check if follower and following aren't the same user.
+def validate_user_follow(follower, following):
+    """Validate that the provided arguments are not the same user."""
+    if follower == following:
+        raise ValueError("Users cannot follow themselves.")
+
+
 class UserManager(BaseUserManager):
     """User manager for the application."""
 
@@ -163,42 +177,40 @@ class UserFollow(Model):
 
     def save(self, *args, **kwargs):
         """Override save method to prevent users from following themselves."""
-        if self.follower == self.following:
-            raise ValueError("Users cannot follow themselves.")
+        validate_user_follow(self.follower, self.following)
         super().save(*args, **kwargs)
 
     @classmethod
-    def add_follower(cls, following, follower):
+    def add_follower(cls, follower, following):
         """Add a follower to the following."""
-        if follower is None or following is None:
-            raise ValueError("Follower and following entities cannot be None.")
-        user_follow = cls(following=following, follower=follower)
+        validate_user(follower, following)
+        user_follow = cls(follower=follower, following=following)
         user_follow.save()
 
     @classmethod
-    def remove_follower(cls, following, follower):
+    def remove_follower(cls, follower, following):
         """Remove a follower from the following."""
+        validate_user(follower, following)
         if follower == following:
             raise ValueError("Users cannot unfollow themselves.")
-        if follower is None or following is None:
-            raise ValueError("Follower and following entities cannot be None.")
-        cls.objects.filter(following=following, follower=follower).delete()
+        cls.objects.filter(follower=follower, following=following).delete()
 
     @classmethod
     def get_followers(cls, following):
         """Get a list of followers for a following."""
+        validate_user(following)
         followers = cls.objects.filter(following=following)
         return [follower.follower for follower in followers]
 
     @classmethod
     def get_following(cls, follower):
         """Get a list of followings for a follower."""
+        validate_user(follower)
         followings = cls.objects.filter(follower=follower)
         return [following.following for following in followings]
 
     @classmethod
     def is_following(cls, follower, following):
         """Check if a follower is following a following."""
-        if follower is None or following is None:
-            raise ValueError("Follower and following entities cannot be None.")
+        validate_user(follower, following)
         return cls.objects.filter(follower=follower, following=following).exists()
